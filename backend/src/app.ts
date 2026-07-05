@@ -1,9 +1,11 @@
+import authRoutes from "./routes/authRoutes.js";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import apiRoutes from "./routes/index.js";
+import { register } from "./controllers/authController.js";
 
 export const app = express();
 
@@ -31,5 +33,7 @@ app.get("/", (_req, res) => {
 
 // API Routes
 app.use("/api/v1", apiRoutes);
+app.use("/api/auth", authRoutes);
+app.post("/api/auth/register", register);
 
 export default app;

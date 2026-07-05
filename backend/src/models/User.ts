@@ -1,11 +1,18 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IUser extends Document {
-  name: string;
+  fullName: string;
   email: string;
   password: string;
   phone: string;
-  role: "admin" | "doctor" | "patient" | "staff";
+  role:
+    | "admin"
+    | "doctor"
+    | "patient"
+    | "receptionist"
+    | "pharmacist"
+    | "lab-technician";
+  gender: "male" | "female" | "other";
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -13,36 +20,55 @@ export interface IUser extends Document {
 
 const userSchema = new Schema<IUser>(
   {
-    name: {
+    fullName: {
       type: String,
-      required: [true, "Name is required"],
+      required: true,
+      trim: true,
     },
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: true,
       unique: true,
       lowercase: true,
+      trim: true,
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
-      select: false,
+      required: true,
+      minlength: 6,
     },
     phone: {
       type: String,
-      required: [true, "Phone is required"],
+      required: true,
+      trim: true,
     },
     role: {
       type: String,
-      enum: ["admin", "doctor", "patient", "staff"],
+      enum: [
+        "admin",
+        "doctor",
+        "patient",
+        "receptionist",
+        "pharmacist",
+        "lab-technician",
+      ],
       default: "patient",
+    },
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+      required: true,
     },
     isActive: {
       type: Boolean,
       default: true,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-export default mongoose.model<IUser>("User", userSchema);
+const User = mongoose.models.User || mongoose.model<IUser>("User", userSchema);
+
+export default User;
